@@ -3,20 +3,20 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "db-pool-frostyfeet909"
+name = "db_frostyfeet909"
 version = "0.0.2"
 authors = [
   { name="Algernon Sampson", email="algiesampson@gmail.com" },
 ]
-description = "A db pool interface."
+description = "A db interface."
 readme = "README.md"
 requires-python = "~=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/frostyfeet909/db-pool"
-"Bug Tracker" = "https://github.com/frostyfeet909/db-pool/issues"
+"Homepage" = "https://github.com/frostyfeet909/db_frostyfeet909"
+"Bug Tracker" = "https://github.com/frostyfeet909/db_frostyfeet909/issues"

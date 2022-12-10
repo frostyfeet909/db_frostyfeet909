@@ -1,4 +1,4 @@
-# db-pool
+# db_frostyfeet909
 Provides methods to work with a queue pool from SQL alchemy, automatically instantiates pool using environment variables on import.
 
 Set `DB_CONN` as the following format,
