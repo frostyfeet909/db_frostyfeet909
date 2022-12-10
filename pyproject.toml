@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "db_pool_frostyfeet909"
+name = "db-pool-frostyfeet909"
 version = "0.0.1"
 authors = [
   { name="Algernon Sampson", email="algiesampson@gmail.com" },
@@ -18,5 +18,5 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/pypa/sampleproject"
-"Bug Tracker" = "https://github.com/pypa/sampleproject/issues"
+"Homepage" = "https://github.com/frostyfeet909/db-pool"
+"Bug Tracker" = "https://github.com/frostyfeet909/db-pool/issues"
