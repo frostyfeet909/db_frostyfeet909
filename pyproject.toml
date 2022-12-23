@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "db_frostyfeet909"
-version = "0.0.2"
+version = "0.0.6"
 authors = [
-  { name="Algernon Sampson", email="algiesampson@gmail.com" },
+    { name = "Algernon Sampson", email = "algiesampson@gmail.com" },
 ]
 description = "A db interface."
 readme = "README.md"
@@ -16,6 +16,7 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent",
 ]
+dependencies = ["psycopg2-binary==2.9.5", "SQLAlchemy==1.4.42", "sqlalchemy-utils==0.38.0"]
 
 [project.urls]
 "Homepage" = "https://github.com/frostyfeet909/db_frostyfeet909"
