@@ -1,1 +1,1 @@
-from db_frostyfeet909.main import *
+from db_frostyfeet909.main import Connection

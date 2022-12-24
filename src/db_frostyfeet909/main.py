@@ -1,25 +1,26 @@
-from os import environ
 import sqlalchemy
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine.url import URL
 from sqlalchemy.engine.cursor import CursorResult
-from sqlalchemy.pool import QueuePool
-from sqlalchemy.exc import *
-from sqlalchemy.sql.functions import *
+from sqlalchemy.pool import QueuePool, Pool
 from sqlalchemy_utils import functions as sqlalchemy_utils
 
 
 class Connection:
-    _engine: Engine = None
+    """A wrapper for a sqlalchemy engine.
 
-    @classmethod
-    def execute_query(cls, query: str, params: dict | list[dict] = None) -> None:
+    Provides methods for acting on implicitly created sqlalchemy engine/pool. Thread safe.
+    """
+
+    def __init__(self, url: URL, pool: Pool = None):
+        self._engine = sqlalchemy.create_engine(url, poolclass=(QueuePool if not pool else pool))
+
+    def execute_query(self, query: str, params: dict | list[dict] = None) -> None:
         """Execute query with params, no result"""
-        return cls._execute(query, params)
+        self._execute(query, params)
 
-    @classmethod
-    def execute_query_result(cls, query: str, params: dict | list[dict] = None, return_list: bool = True) -> list[dict] | dict[list]:
+    def execute_query_result(self, query: str, params: dict | list[dict] = None, return_list: bool = True) -> list[dict] | dict[list]:
         """Execute query with params, with result"""
-        result = cls._execute(query, params, _result=True)
+        result = self._execute(query, params, _result=True)
         keys = list(result.keys())
         values = result.all()
 
@@ -28,10 +29,9 @@ class Connection:
         else:
             return {keys[i]: [value[i] for value in values] for i in range(len(keys))}
 
-    @classmethod
-    def execute_query_result_single(cls, query: str, params: dict | list[dict] = None) -> dict:
+    def execute_query_result_single(self, query: str, params: dict | list[dict] = None) -> dict:
         """Execute query with params, with single result"""
-        result = cls._execute(query, params, _result=True)
+        result = self._execute(query, params, _result=True)
         keys = list(result.keys())
         values = result.fetchone()
 
@@ -41,10 +41,9 @@ class Connection:
         result.close()
         return {keys[i]: values[0] for i in range(len(keys))}
 
-    @classmethod
-    def _execute(cls, query: str, params: dict | list[dict] = None, _result: bool = False) -> None | CursorResult:
+    def _execute(self, query: str, params: dict | list[dict] = None, _result: bool = False) -> None | CursorResult:
         """Execute query with params, Privately"""
-        with cls._engine.connect() as connection:
+        with self._engine.connect() as connection:
             cur = connection.execute(sqlalchemy.text(query), params)
 
             if _result:
@@ -52,36 +51,23 @@ class Connection:
             else:
                 cur.close()
 
-    @classmethod
-    def create_database(cls):
+    def create_database(self):
         """Create database if not exists"""
-        if not sqlalchemy_utils.database_exists(cls._engine.url):
-            sqlalchemy_utils.create_database(cls._engine.url)
+        if not sqlalchemy_utils.database_exists(self._engine.url):
+            sqlalchemy_utils.create_database(self._engine.url)
 
-    @classmethod
-    def drop_database(cls):
+    def drop_database(self):
         """Drop database if not exists"""
-        if sqlalchemy_utils.database_exists(cls._engine.url):
-            sqlalchemy_utils.drop_database(cls._engine.url)
+        if sqlalchemy_utils.database_exists(self._engine.url):
+            sqlalchemy_utils.drop_database(self._engine.url)
 
-    @classmethod
-    def verify(cls):
+    def verify(self):
         """Check connection works"""
-        if not cls._engine:
+        if not self._engine:
             raise ValueError("The engine is not defined")
 
-        with cls._engine.connect() as con:
+        if not sqlalchemy_utils.database_exists(self._engine.url):
+            raise ValueError("The database is not defined")
+
+        with self._engine.connect():
             pass
-
-
-if __name__ == "__main__":
-    pass
-else:
-    if not environ.get("DB_CONN"):
-        raise ValueError("DB_CONN not set")
-
-    if Connection._engine:
-        raise ValueError("The engine is already defined")
-
-    Connection._engine = sqlalchemy.create_engine(environ.get("DB_CONN"), poolclass=QueuePool)
-    Connection()  # Check creates
