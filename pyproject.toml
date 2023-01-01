@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "db_frostyfeet909"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
     { name = "Algernon Sampson", email = "algiesampson@gmail.com" },
 ]
@@ -21,3 +21,8 @@ dependencies = ["psycopg2-binary==2.9.5", "SQLAlchemy==1.4.42", "sqlalchemy-util
 [project.urls]
 "Homepage" = "https://github.com/frostyfeet909/db_frostyfeet909"
 "Bug Tracker" = "https://github.com/frostyfeet909/db_frostyfeet909/issues"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]

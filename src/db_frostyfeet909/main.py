@@ -1,3 +1,4 @@
+from threading import Lock
 import sqlalchemy
 from sqlalchemy.engine.url import URL
 from sqlalchemy.engine.cursor import CursorResult
@@ -11,8 +12,12 @@ class Connection:
     Provides methods for acting on implicitly created sqlalchemy engine/pool. Thread safe.
     """
 
-    def __init__(self, url: URL, pool: Pool = None):
-        self._engine = sqlalchemy.create_engine(url, poolclass=(QueuePool if not pool else pool))
+    def __init__(self, url: URL, pool: Pool = None, echo: bool = False):
+        with ENGINE__lock:
+            if url not in ENGINE:
+                ENGINE[url] = sqlalchemy.create_engine(url, poolclass=(QueuePool if not pool else pool), echo=echo)
+
+        self._engine = ENGINE[url]
 
     def execute_query(self, query: str, params: dict | list[dict] = None) -> None:
         """Execute query with params, no result"""
@@ -53,21 +58,40 @@ class Connection:
 
     def create_database(self):
         """Create database if not exists"""
-        if not sqlalchemy_utils.database_exists(self._engine.url):
+        if not self.exists_database():
             sqlalchemy_utils.create_database(self._engine.url)
 
     def drop_database(self):
         """Drop database if not exists"""
-        if sqlalchemy_utils.database_exists(self._engine.url):
+        if self.exists_database():
             sqlalchemy_utils.drop_database(self._engine.url)
 
-    def verify(self):
+    def exists_database(self) -> bool:
+        """Existence of database"""
+        return sqlalchemy_utils.database_exists(self._engine.url)
+
+    def verify(self) -> bool:
         """Check connection works"""
+        errors = []
+
         if not self._engine:
-            raise ValueError("The engine is not defined")
+            errors.append(ValueError("The engine is not defined"))
 
-        if not sqlalchemy_utils.database_exists(self._engine.url):
-            raise ValueError("The database is not defined")
+        if not self.exists_database():
+            errors.append(ValueError("The database is not defined"))
 
-        with self._engine.connect():
-            pass
+        try:
+            with self._engine.connect():
+                pass
+        except Exception as ex:
+            errors.append(ex)
+
+        if errors:
+            raise Exception(errors)  # TODO:Change to ExceptionGroup for 3.11
+
+        return True
+
+
+if __name__ != "__main__":
+    ENGINE = {}
+    ENGINE__lock = Lock()
