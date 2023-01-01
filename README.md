@@ -1,4 +1,7 @@
 # db_frostyfeet909
+[![Linting](https://github.com/frostyfeet909/db_frostyfeet909/actions/workflows/linting.yml/badge.svg)](https://github.com/frostyfeet909/db_frostyfeet909/actions/workflows/linting.yml)
+[![Testing](https://github.com/frostyfeet909/db_frostyfeet909/actions/workflows/testing.yml/badge.svg)](https://github.com/frostyfeet909/db_frostyfeet909/actions/workflows/testing.yml)
+
 Provides methods to work with a queue pool from SQL alchemy.
 
 
