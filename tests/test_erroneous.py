@@ -1,5 +1,5 @@
 import pytest
-from sqlalchemy.exc import *
+from sqlalchemy.exc import ArgumentError
 
 
 @pytest.fixture
