@@ -8,7 +8,7 @@ documentation: https://github.com/frostyfeet909/db_frostyfeet909
 
 
 __author__ = "Algernon Sampson (algiesampson@gmail.com)"
-__version__ = "0.0.9"
+__version__ = "1.0.0"
 __license__ = "GNU General Public License v3.0"
 
 
